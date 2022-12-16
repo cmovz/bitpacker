@@ -27,10 +27,6 @@ static const unsigned int mask_table[9] = {
   0x0, 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff
 };
 
-static const unsigned int shift_table[9] = {
-  8, 7, 6, 5, 4, 3, 2, 1, 0
-};
-
 void bitpacker_ctx_init(struct bitpacker_ctx *ctx, void *dest)
 {
   ctx->ptr = dest;
@@ -56,7 +52,7 @@ void bitpacker_update(
       ? ctx->byte_capacity : src_available;
     
     *ctx->ptr |= (mask_table[n] & (*src >> src_pos)) 
-      << shift_table[ctx->byte_capacity];
+      << (8 - ctx->byte_capacity);
     
     bit_len -= n;
 
@@ -106,7 +102,7 @@ void bitunpacker_update(
       n = dest_capacity;
 
    *dest |= (mask_table[n] & (*ctx->ptr >> ctx->byte_pos))
-      << shift_table[dest_capacity];
+      << (8 - dest_capacity);
     
     bit_len -= n;
 
